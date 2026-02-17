@@ -1,0 +1,164 @@
+{
+    "f2": {
+        "pull_down": 160,
+        "horizontal": -7,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "r4c": {
+        "pull_down": 110,
+        "horizontal": -5,
+        "horizontal_delay_ms": 62,
+        "horizontal_duration_ms": 3398
+    },
+    "p90": {
+        "pull_down": 43.0,
+        "horizontal": 2.0,
+        "horizontal_delay_ms": 62,
+        "horizontal_duration_ms": 0
+    },
+    "vector": {
+        "pull_down": 50.0,
+        "horizontal": -2.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "smg11": {
+        "pull_down": 65.0,
+        "horizontal": 0.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "t5-smg": {
+        "pull_down": 38.0,
+        "horizontal": 0.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "mp7": {
+        "pull_down": 43.0,
+        "horizontal": 0.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "9x19VSN": {
+        "pull_down": 38.0,
+        "horizontal": -3.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "ak12": {
+        "pull_down": 85.0,
+        "horizontal": -5.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "t95LSW": {
+        "pull_down": 73.0,
+        "horizontal": 2.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "ump45": {
+        "pull_down": 22.0,
+        "horizontal": -3.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "mp5": {
+        "pull_down": 35.0,
+        "horizontal": -2.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "V308": {
+        "pull_down": 72.0,
+        "horizontal": 0.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "C8-SFW": {
+        "pull_down": 100.0,
+        "horizontal": -4.0,
+        "horizontal_delay_ms": 44,
+        "horizontal_duration_ms": 0
+    },
+    "type89": {
+        "pull_down": 82.0,
+        "horizontal": -10.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "L85A2": {
+        "pull_down": 65.0,
+        "horizontal": 10.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "MPX": {
+        "pull_down": 34.0,
+        "horizontal": 0.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "AUG-A2": {
+        "pull_down": 50.0,
+        "horizontal": 6.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "Mx4-Storm": {
+        "pull_down": 44.0,
+        "horizontal": 5.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "smg12-requires-left-and-right-control": {
+        "pull_down": 90.0,
+        "horizontal": 0.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "augA3": {
+        "pull_down": 30.0,
+        "horizontal": 3.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "p10-roni": {
+        "pull_down": 40.0,
+        "horizontal": 6.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "pdw9": {
+        "pull_down": 75.0,
+        "horizontal": 0.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "ak74M": {
+        "pull_down": 74.0,
+        "horizontal": -5.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "556XI": {
+        "pull_down": 61.0,
+        "horizontal": 8.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "G36C": {
+        "pull_down": 80.0,
+        "horizontal": 6.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "552-Commando": {
+        "pull_down": 70.0,
+        "horizontal": -6.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    }
+}
