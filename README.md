@@ -1,5 +1,6 @@
 # Truly
 A recoil control script with a web UI, powered by a makcu.
+
 The default config has R6 guns but you can use it for any game.
 
 ## Preview
