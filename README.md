@@ -5,7 +5,7 @@ The default config has R6 guns but you can use it for any game.
 ## Preview
 
 ### Web UI
-![Truly Web UI](https://raw.githubusercontent.com/stratxgy/stratxgy.github.io/main/trulyimages/ui.png)
+<img src="https://raw.githubusercontent.com/stratxgy/stratxgy.github.io/main/trulyimages/ui.png" width="250"/>
 
 ### Demo
 [![Truly Demo](https://img.youtube.com/vi/ysIKCjLv5eo/maxresdefault.jpg)](https://www.youtube.com/watch?v=ysIKCjLv5eo)
