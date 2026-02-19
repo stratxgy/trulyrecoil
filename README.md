@@ -8,7 +8,9 @@ The default config has R6 guns but you can use it for any game.
 
 - Python 3.10+
 - A makcu
-
+  
+> [!NOTE]
+> By default, the recoil is set to work with the flash hider + vertical grip on ALL guns.
 ## Setup
 
 ```bash
