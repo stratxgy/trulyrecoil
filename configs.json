@@ -160,6 +160,59 @@
         "horizontal": -6.0,
         "horizontal_delay_ms": 0,
         "horizontal_duration_ms": 0
+    },
+    "mk17-cqb": {
+        "pull_down": 42.0,
+        "horizontal": 7.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "para308": {
+        "pull_down": 67.0,
+        "horizontal": -3.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "552commando": {
+        "pull_down": 71.0,
+        "horizontal": -4.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "sc3000k": {
+        "pull_down": 96.0,
+        "horizontal": -7.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "m4": {
+        "pull_down": 84.0,
+        "horizontal": -3.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "uzk50gi": {
+        "pull_down": 37.0,
+        "horizontal": 0.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "mp5sd": {
+        "pull_down": 37.0,
+        "horizontal": -2.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "dp27": {
+        "pull_down": 23.0,
+        "horizontal": 3.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "9mmC1": {
+        "pull_down": 22.0,
+        "horizontal": 0.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
     }
-
 }
