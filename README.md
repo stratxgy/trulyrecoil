@@ -1,6 +1,6 @@
 # Truly
 > [!CAUTION]
-> I forgot to account for different DPI's and sensitivities (:cry:) I'll fix it in the next update but right now its 4-4 800 dpi 60 holo 67 acog advanced zoom settings
+> I forgot to account for different DPI's and sensitivities (😭) I'll fix it in the next update but right now its 4-4 800 dpi 60 holo 67 acog advanced zoom settings
 
 A recoil control script with a web UI, powered by a makcu.
 
