@@ -113,7 +113,7 @@
         "horizontal_delay_ms": 0,
         "horizontal_duration_ms": 0
     },
-    "smg12-requires-left-and-right-control": {
+    "smg12": {
         "pull_down": 90.0,
         "horizontal": 0.0,
         "horizontal_delay_ms": 0,
@@ -152,12 +152,6 @@
     "G36C": {
         "pull_down": 80.0,
         "horizontal": 6.0,
-        "horizontal_delay_ms": 0,
-        "horizontal_duration_ms": 0
-    },
-    "552-Commando": {
-        "pull_down": 70.0,
-        "horizontal": -6.0,
         "horizontal_delay_ms": 0,
         "horizontal_duration_ms": 0
     },
@@ -216,3 +210,4 @@
         "horizontal_duration_ms": 0
     }
 }
+
