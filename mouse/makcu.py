@@ -2,6 +2,13 @@ import time
 import threading
 from makcu import create_controller, MouseButton
 
+BUTTONS = {
+    "LMB": MouseButton.LEFT,
+    "RMB": MouseButton.RIGHT,
+    "MMB": MouseButton.MIDDLE,
+    "M4": MouseButton.MOUSE4,
+    "M5": MouseButton.MOUSE5
+}
 
 class makcu_controller:
     controller = None
@@ -18,7 +25,6 @@ class makcu_controller:
     button_lock = threading.Lock()
     is_connected_flag = False
 
-
     @staticmethod
     def is_connected():
         with makcu_controller.connection_lock:
@@ -26,7 +32,6 @@ class makcu_controller:
                 makcu_controller.is_connected_flag
                 and makcu_controller.controller is not None
             )
-
 
     @staticmethod
     def connect():
@@ -47,16 +52,10 @@ class makcu_controller:
 
                     def on_button_event(button: MouseButton, pressed: bool):
                         with makcu_controller.button_lock:
-                            if button == MouseButton.LEFT:
-                                makcu_controller.button_states["LMB"] = pressed
-                            elif button == MouseButton.RIGHT:
-                                makcu_controller.button_states["RMB"] = pressed
-                            elif button == MouseButton.MIDDLE:
-                                makcu_controller.button_states["MMB"] = pressed
-                            elif button == MouseButton.MOUSE4:
-                                makcu_controller.button_states["M4"] = pressed
-                            elif button == MouseButton.MOUSE5:
-                                makcu_controller.button_states["M5"] = pressed
+                            for name, btn in BUTTONS.items():
+                                if btn == button:
+                                    makcu_controller.button_states[name] = pressed
+                                    break
 
                     makcu_controller.controller.set_button_callback(on_button_event)
                     makcu_controller.controller.enable_button_monitoring(True)
@@ -82,22 +81,14 @@ class makcu_controller:
 
         mck = makcu_controller.controller
         try:
-            if button_name == "LMB":
-                mck.click(MouseButton.LEFT)
-            elif button_name == "RMB":
-                mck.click(MouseButton.RIGHT)
-            elif button_name == "MMB":
-                mck.click(MouseButton.MIDDLE)
-            elif button_name == "M4":
-                mck.click(MouseButton.MOUSE4)
-            elif button_name == "M5":
-                mck.click(MouseButton.MOUSE5)
-            return True
+            if button_name in BUTTONS:
+                mck.click(BUTTONS[button_name])
+                return True
+            return False
         except Exception as e:
             print(f"[MAKCU] Click error: {e}")
             makcu_controller.is_connected_flag = False
             return False
-
 
     @staticmethod
     def simple_move_mouse(x, y):
@@ -111,7 +102,6 @@ class makcu_controller:
             print(f"[MAKCU] Move error: {e}")
             makcu_controller.is_connected_flag = False
             return False
-
 
     @staticmethod
     def move_mouse_smoothly(dx, dy, steps=20, duration=0.05):
@@ -159,12 +149,10 @@ class makcu_controller:
             makcu_controller.is_connected_flag = False
             return False
 
-
     @staticmethod
     def get_button_state(button_name: str):
         with makcu_controller.button_lock:
             return makcu_controller.button_states.get(button_name, False)
-
 
     @staticmethod
     def disconnect():
@@ -175,5 +163,5 @@ class makcu_controller:
                 except Exception:
                     pass
 
-                makcu_controller.controller = None
-                makcu_controller.is_connected_flag = False
+            makcu_controller.controller = None
+            makcu_controller.is_connected_flag = False
