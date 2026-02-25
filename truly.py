@@ -174,14 +174,19 @@ async def websocket_endpoint(websocket: WebSocket):
             data = await websocket.receive_text()
             try:
                 msg = json.loads(data)
-                if "pull_down" in msg:
-                    app_state.set_active_value(float(msg["pull_down"]))
-                if "horizontal" in msg:
-                    app_state.set_horizontal_value(float(msg["horizontal"]))
-                if "horizontal_delay_ms" in msg:
-                    app_state.set_horizontal_delay(int(msg["horizontal_delay_ms"]))
-                if "horizontal_duration_ms" in msg:
-                    app_state.set_horizontal_duration(int(msg["horizontal_duration_ms"]))
+                params = {
+                    "pull_down": ("active_value", float),
+                    "horizontal": ("horizontal_value", float),
+                    "horizontal_delay_ms": ("horizontal_delay", int),
+                    "horizontal_duration_ms": ("horizontal_duration", int)
+                }
+                
+                for key, (method, converter) in params.items():
+                    if key in msg:
+                        value = converter(msg[key])
+                        method = getattr(app_state, f"set_{method}")
+                        method(value)
+                        
             except (json.JSONDecodeError, ValueError, TypeError):
                 pass
     except WebSocketDisconnect:
