@@ -1,1 +1,2 @@
 secretlay3r - cleaning up code
+blainsage - suggesting to add that port 8000 needs to be allowed in Windows firewall
