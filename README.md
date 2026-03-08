@@ -49,6 +49,6 @@ Open that URL in any browser (works from your phone too).
 - **Horizontal Duration** -- how long horizontal lasts after the delay (0 = forever)
 - **Toggle key** -- choose which mouse button (M4, M5, or Middle Mouse) toggles recoil on/off
 ## Gun Configs
-Save and load per-gun settings from the web UI. Configs are stored in `configs.json` (created automatically).
+Save and load per-gun settings from the web UI. Configs are stored in `configs/(yourgame)` (created automatically).
 ## Accessing from another device
 Both devices must be on the same network (same Wi-Fi/LAN). Use the IP address shown in the console on port 8000.
