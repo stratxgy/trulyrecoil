@@ -27,7 +27,6 @@ class makcu_controller:
     button_lock = threading.Lock()
     is_connected_flag = False
 
-
     @staticmethod
     def is_connected():
         with makcu_controller.connection_lock:
@@ -35,7 +34,6 @@ class makcu_controller:
                 makcu_controller.is_connected_flag
                 and makcu_controller.controller is not None
             )
-
 
     @staticmethod
     def connect():
@@ -61,7 +59,8 @@ class makcu_controller:
                                     makcu_controller.button_states[name] = pressed
                                     break
 
-                    makcu_controller.controller.set_button_callback(on_button_event)
+                    makcu_controller.controller.set_button_callback(
+                        on_button_event)
                     makcu_controller.controller.enable_button_monitoring(True)
 
                     makcu_controller.is_connected_flag = True
@@ -94,7 +93,6 @@ class makcu_controller:
             makcu_controller.is_connected_flag = False
             return False
 
-
     @staticmethod
     def simple_move_mouse(x, y):
         if not makcu_controller.is_connected():
@@ -107,7 +105,6 @@ class makcu_controller:
             print(f"[MAKCU] Move error: {e}")
             makcu_controller.is_connected_flag = False
             return False
-
 
     @staticmethod
     def move_mouse_smoothly(dx, dy, steps=20, duration=0.05):
@@ -155,12 +152,10 @@ class makcu_controller:
             makcu_controller.is_connected_flag = False
             return False
 
-
     @staticmethod
     def get_button_state(button_name: str):
         with makcu_controller.button_lock:
             return makcu_controller.button_states.get(button_name, False)
-
 
     @staticmethod
     def disconnect():
