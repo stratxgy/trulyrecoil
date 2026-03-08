@@ -21,8 +21,13 @@ The default config has R6 guns but you can use it for any game.
 > [!NOTE]
 > By default, the recoil is set to work with the flash hider + vertical grip on ALL guns.
 ## Setup
+Download the release, then run (terminal)
 ```bash
 pip install -r requirements.txt
+```
+If you don't have port 8000 allowed it won't work (powershell)
+```powershell
+New-NetFirewallRule -DisplayName "Open Port 8000" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 8000
 ```
 ## Usage
 ```bash
