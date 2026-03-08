@@ -11,6 +11,10 @@ The default config has R6 and Rust guns but you can use it for any game.
 
 ## Preview
 
+### The GOAT 👑 (idk who this is)
+<img src="https://github.com/stratxgy/stratxgy.github.io/blob/main/trulyimages/trulyr6.jpg" width="850"/>
+
+
 ### Web UI
 <img src="https://raw.githubusercontent.com/stratxgy/stratxgy.github.io/main/trulyimages/ui.png" width="250"/>
 
