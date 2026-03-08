@@ -1,0 +1,44 @@
+{
+    "assault rifle": {
+        "pull_down": 40.0,
+        "horizontal": -13.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "custom smg": {
+        "pull_down": 27.0,
+        "horizontal": 0.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "handmade smg": {
+        "pull_down": 27.0,
+        "horizontal": 0.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "thompson": {
+        "pull_down": 22.0,
+        "horizontal": 0.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "m249": {
+        "pull_down": 42.0,
+        "horizontal": -11.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "mp5a4": {
+        "pull_down": 35.0,
+        "horizontal": 0.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    },
+    "HMLMG": {
+        "pull_down": 42.0,
+        "horizontal": 13.0,
+        "horizontal_delay_ms": 0,
+        "horizontal_duration_ms": 0
+    }
+}
