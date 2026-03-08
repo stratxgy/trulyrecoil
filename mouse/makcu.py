@@ -3,6 +3,15 @@ import threading
 from makcu import create_controller, MouseButton
 
 
+BUTTONS = {
+    "LMB": MouseButton.LEFT,
+    "RMB": MouseButton.RIGHT,
+    "MMB": MouseButton.MIDDLE,
+    "M4": MouseButton.MOUSE4,
+    "M5": MouseButton.MOUSE5
+}
+
+
 class makcu_controller:
     controller = None
 
@@ -47,16 +56,10 @@ class makcu_controller:
 
                     def on_button_event(button: MouseButton, pressed: bool):
                         with makcu_controller.button_lock:
-                            if button == MouseButton.LEFT:
-                                makcu_controller.button_states["LMB"] = pressed
-                            elif button == MouseButton.RIGHT:
-                                makcu_controller.button_states["RMB"] = pressed
-                            elif button == MouseButton.MIDDLE:
-                                makcu_controller.button_states["MMB"] = pressed
-                            elif button == MouseButton.MOUSE4:
-                                makcu_controller.button_states["M4"] = pressed
-                            elif button == MouseButton.MOUSE5:
-                                makcu_controller.button_states["M5"] = pressed
+                            for name, btn in BUTTONS.items():
+                                if btn == button:
+                                    makcu_controller.button_states[name] = pressed
+                                    break
 
                     makcu_controller.controller.set_button_callback(on_button_event)
                     makcu_controller.controller.enable_button_monitoring(True)
@@ -82,17 +85,10 @@ class makcu_controller:
 
         mck = makcu_controller.controller
         try:
-            if button_name == "LMB":
-                mck.click(MouseButton.LEFT)
-            elif button_name == "RMB":
-                mck.click(MouseButton.RIGHT)
-            elif button_name == "MMB":
-                mck.click(MouseButton.MIDDLE)
-            elif button_name == "M4":
-                mck.click(MouseButton.MOUSE4)
-            elif button_name == "M5":
-                mck.click(MouseButton.MOUSE5)
-            return True
+            if button_name in BUTTONS:
+                mck.click(BUTTONS[button_name])
+                return True
+            return False
         except Exception as e:
             print(f"[MAKCU] Click error: {e}")
             makcu_controller.is_connected_flag = False
@@ -175,5 +171,5 @@ class makcu_controller:
                 except Exception:
                     pass
 
-                makcu_controller.controller = None
-                makcu_controller.is_connected_flag = False
+            makcu_controller.controller = None
+            makcu_controller.is_connected_flag = False
