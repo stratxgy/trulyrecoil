@@ -1,12 +1,13 @@
 # Truly
 > [!CAUTION]
-> I forgot to account for different DPI's and sensitivities (😭) I'll fix it in the next update but right now its 4-4 800 dpi 60 holo 67 acog advanced zoom settings
+> I forgot to account for different DPI's and sensitivities (😭) I'll fix it in the next update but right now its 4-4 800 dpi 60 holo 67 acog advanced zoom settings for r6
 
 A recoil control script with a web UI, powered by a makcu.
 
 I've not tried it, but people say it works on 1pc.
 
-The default config has R6 guns but you can use it for any game.
+The default config has R6 and Rust guns but you can use it for any game.
+(featured in a Camomo video when??)
 
 ## Preview
 
