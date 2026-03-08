@@ -12,7 +12,11 @@ import time
 
 from mouse.makcu import makcu_controller
 
-CONFIG_FILE = os.path.join(os.path.dirname(__file__), 'configs.json')
+CONFIG_DIR = os.path.join(os.path.dirname(__file__), 'configs')
+os.makedirs(CONFIG_DIR, exist_ok=True)
+
+DEFAULT_CONFIG_FILE = "r6.json"
+CONFIG_FILE = os.path.join(CONFIG_DIR, DEFAULT_CONFIG_FILE)
 
 class GunConfig(BaseModel):
     gun_name: str = Field(..., min_length=1, max_length=50, pattern=r'^[a-zA-Z0-9_\- ]+$')
@@ -21,22 +25,63 @@ class GunConfig(BaseModel):
     horizontal_delay_ms: int = Field(default=500, ge=0, le=5000)
     horizontal_duration_ms: int = Field(default=2000, ge=0, le=10000)
 
-def read_configs():
-    if not os.path.exists(CONFIG_FILE):
+def get_config_path(filename):
+    return os.path.join(CONFIG_DIR, filename)
+
+def read_configs(config_file=None):
+    if config_file is None:
+        config_file = DEFAULT_CONFIG_FILE
+    config_path = get_config_path(config_file)
+    if not os.path.exists(config_path):
         return {}
     try:
-        with open(CONFIG_FILE, 'r') as f:
+        with open(config_path, 'r') as f:
             return json.load(f)
     except (json.JSONDecodeError, OSError) as e:
         print(f"[CONFIG] Error reading configs: {e}")
         return {}
 
-def write_configs(configs):
+def write_configs(configs, config_file=None):
+    if config_file is None:
+        config_file = DEFAULT_CONFIG_FILE
+    config_path = get_config_path(config_file)
     try:
-        with open(CONFIG_FILE, 'w') as f:
+        with open(config_path, 'w') as f:
             json.dump(configs, f, indent=4)
     except OSError as e:
         print(f"[CONFIG] Error writing configs: {e}")
+
+def list_config_files():
+    try:
+        files = [f for f in os.listdir(CONFIG_DIR) if f.endswith('.json')]
+        return sorted(files)
+    except OSError:
+        return []
+
+def create_config_file(filename):
+    if not filename.endswith('.json'):
+        filename = filename + '.json'
+    filepath = get_config_path(filename)
+    if os.path.exists(filepath):
+        raise HTTPException(status_code=400, detail="Config file already exists.")
+    try:
+        with open(filepath, 'w') as f:
+            json.dump({}, f)
+        return filename
+    except OSError as e:
+        raise HTTPException(status_code=500, detail=f"Failed to create config file: {e}")
+
+def delete_config_file(filename):
+    if filename == DEFAULT_CONFIG_FILE:
+        raise HTTPException(status_code=400, detail="Cannot delete default config.")
+    filepath = get_config_path(filename)
+    if not os.path.exists(filepath):
+        raise HTTPException(status_code=404, detail="Config file not found.")
+    try:
+        os.remove(filepath)
+        return True
+    except OSError as e:
+        raise HTTPException(status_code=500, detail=f"Failed to delete config file: {e}")
 
 VALID_TOGGLE_BUTTONS = ["MMB", "M4", "M5"]
 
@@ -48,6 +93,7 @@ class AppState:
         self.horizontal_duration_ms = 2000
         self.is_enabled = False
         self.toggle_button = "M5"
+        self.current_config_file = DEFAULT_CONFIG_FILE
         self.lock = threading.Lock()
 
     def set_active_value(self, value):
@@ -102,6 +148,17 @@ class AppState:
         with self.lock:
             return self.toggle_button
 
+    def set_current_config_file(self, filename):
+        with self.lock:
+            if not filename.endswith('.json'):
+                filename = filename + '.json'
+            self.current_config_file = filename
+            return filename
+
+    def get_current_config_file(self):
+        with self.lock:
+            return self.current_config_file
+
     def get_status(self):
         with self.lock:
             return {
@@ -111,6 +168,7 @@ class AppState:
                 "horizontal": self.active_horizontal_value,
                 "horizontal_delay_ms": self.horizontal_delay_ms,
                 "horizontal_duration_ms": self.horizontal_duration_ms,
+                "current_config_file": self.current_config_file,
             }
 
 app_state = AppState()
@@ -174,14 +232,18 @@ async def websocket_endpoint(websocket: WebSocket):
             data = await websocket.receive_text()
             try:
                 msg = json.loads(data)
-                if "pull_down" in msg:
-                    app_state.set_active_value(float(msg["pull_down"]))
-                if "horizontal" in msg:
-                    app_state.set_horizontal_value(float(msg["horizontal"]))
-                if "horizontal_delay_ms" in msg:
-                    app_state.set_horizontal_delay(int(msg["horizontal_delay_ms"]))
-                if "horizontal_duration_ms" in msg:
-                    app_state.set_horizontal_duration(int(msg["horizontal_duration_ms"]))
+                params = {
+                    "pull_down": ("active_value", float),
+                    "horizontal": ("horizontal_value", float),
+                    "horizontal_delay_ms": ("horizontal_delay", int),
+                    "horizontal_duration_ms": ("horizontal_duration", int)
+                }
+                
+                for key, (method, converter) in params.items():
+                    if key in msg:
+                        value = converter(msg[key])
+                        method = getattr(app_state, f"set_{method}")
+                        method(value)
             except (json.JSONDecodeError, ValueError, TypeError):
                 pass
     except WebSocketDisconnect:
@@ -206,29 +268,62 @@ async def set_toggle_button(config: ToggleButtonConfig):
         raise HTTPException(status_code=400, detail=f"Invalid button. Must be one of: {VALID_TOGGLE_BUTTONS}")
     return {"toggle_button": result}
 
+class ConfigFileRequest(BaseModel):
+    filename: str
+
+@app.get("/config-files", response_class=JSONResponse)
+async def get_config_files():
+    return {
+        "files": list_config_files(),
+        "current": app_state.get_current_config_file()
+    }
+
+@app.post("/config-files", response_class=JSONResponse)
+async def create_config_file_action(req: ConfigFileRequest):
+    filename = create_config_file(req.filename)
+    return {"message": f"Config file '{filename}' created.", "files": list_config_files()}
+
+@app.post("/config-files/switch", response_class=JSONResponse)
+async def switch_config_file(req: ConfigFileRequest):
+    filename = req.filename
+    if not filename.endswith('.json'):
+        filename = filename + '.json'
+    filepath = get_config_path(filename)
+    if not os.path.exists(filepath):
+        raise HTTPException(status_code=404, detail="Config file not found.")
+    app_state.set_current_config_file(filename)
+    return {"current_config_file": filename, "guns": read_configs(filename)}
+
+@app.delete("/config-files/{filename}", response_class=JSONResponse)
+async def delete_config_file_action(filename: str):
+    delete_config_file(filename)
+    return {"message": "Config file deleted.", "files": list_config_files()}
+
 @app.get("/configs", response_class=JSONResponse)
 async def get_configs():
-    return read_configs()
+    return read_configs(app_state.get_current_config_file())
 
 @app.post("/configs", response_class=JSONResponse)
 async def create_config(config: GunConfig):
-    configs = read_configs()
+    current_file = app_state.get_current_config_file()
+    configs = read_configs(current_file)
     configs[config.gun_name] = {
         "pull_down": config.pull_down_value,
         "horizontal": config.horizontal_value,
         "horizontal_delay_ms": config.horizontal_delay_ms,
         "horizontal_duration_ms": config.horizontal_duration_ms,
     }
-    write_configs(configs)
+    write_configs(configs, current_file)
     return {"message": "Config saved successfully."}
 
 @app.delete("/configs/{gun_name}", response_class=JSONResponse)
 async def delete_config(gun_name: str):
-    configs = read_configs()
+    current_file = app_state.get_current_config_file()
+    configs = read_configs(current_file)
     if gun_name not in configs:
         raise HTTPException(status_code=404, detail="Config not found.")
     del configs[gun_name]
-    write_configs(configs)
+    write_configs(configs, current_file)
     return {"message": "Config deleted successfully."}
     
 @app.get("/", response_class=HTMLResponse)
@@ -559,6 +654,27 @@ async def get():
             .card:nth-child(6) { animation: fadeInUp 0.5s ease-out 0.25s both; }
             .card:nth-child(7) { animation: fadeInUp 0.5s ease-out 0.3s both; }
             .card:nth-child(8) { animation: fadeInUp 0.5s ease-out 0.35s both; }
+            .card:nth-child(9) { animation: fadeInUp 0.5s ease-out 0.4s both; }
+
+            .tabs { display: flex; gap: 0; margin-bottom: 16px; border-radius: 8px; overflow: hidden; border: 1px solid #2a2a2a; }
+            .tab { flex: 1; padding: 12px; background: #1a1a1a; border: none; color: #666; font-size: 0.9em; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s ease; }
+            .tab:hover { background: #222; }
+            .tab.active { background: #2a2a2a; color: #fff; }
+
+            .tab-content { display: none; }
+            .tab-content.active { display: block; }
+
+            .config-file-row { display: flex; gap: 8px; align-items: center; }
+            .config-file-row select { flex: 1; }
+            .current-badge { 
+                background: #2a2a1a; 
+                border: 1px solid #4a4a2a; 
+                color: #aaaa44; 
+                padding: 4px 8px; 
+                border-radius: 4px; 
+                font-size: 0.75em;
+                margin-left: 8px;
+            }
         </style>
     </head>
     <body>
@@ -581,12 +697,12 @@ async def get():
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-label">Gun Config</div>
-                <input type="text" id="config-search" placeholder="Search guns..." style="width:100%;margin-bottom:8px;">
-                <select id="configs-dropdown"></select>
+            <div class="tabs">
+                <button class="tab active" data-tab="recoil">Recoil</button>
+                <button class="tab" data-tab="settings">Settings</button>
             </div>
 
+            <div id="tab-recoil" class="tab-content active">
             <div class="card">
                 <div class="card-label">Vertical (Pull-down)</div>
                 <input type="number" class="number-input" id="slider-value" value="1" min="0" max="300" step="0.001">
@@ -613,6 +729,26 @@ async def get():
                 <input type="range" min="0" max="10000" step="1" value="2000" id="duration-slider">
                 <div class="slider-hint">How long horizontal lasts (0 = forever)</div>
             </div>
+            </div>
+
+            <div id="tab-settings" class="tab-content">
+            <div class="card">
+                <div class="card-label">Game Config <span class="current-badge" id="current-config-badge"></span></div>
+                <div class="config-file-row">
+                    <select id="config-files-dropdown"></select>
+                </div>
+                <div class="config-file-row" style="margin-top:8px;">
+                    <input type="text" id="new-config-name" placeholder="New config name...">
+                    <button class="btn btn-save" id="create-config-btn">Create</button>
+                    <button class="btn btn-delete" id="delete-config-btn">Delete</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-label">Gun Config</div>
+                <input type="text" id="config-search" placeholder="Search guns..." style="width:100%;margin-bottom:8px;">
+                <select id="configs-dropdown"></select>
+            </div>
 
             <div class="card">
                 <div class="card-label">Save Config</div>
@@ -625,6 +761,7 @@ async def get():
             <div class="card" style="text-align:center;display:flex;gap:8px;justify-content:center;">
                 <button class="btn btn-overwrite" id="overwrite-btn">Overwrite Selected</button>
                 <button class="btn btn-delete" id="delete-btn">Delete Selected</button>
+            </div>
             </div>
         </div>
 
@@ -646,6 +783,11 @@ async def get():
                 const configSearch = document.getElementById("config-search");
                 const toggleBtn = document.getElementById("toggle-btn");
                 const toggleButtonSelect = document.getElementById("toggle-button-select");
+                const configFilesDropdown = document.getElementById("config-files-dropdown");
+                const newConfigNameInput = document.getElementById("new-config-name");
+                const createConfigBtn = document.getElementById("create-config-btn");
+                const deleteConfigBtn = document.getElementById("delete-config-btn");
+                const currentConfigBadge = document.getElementById("current-config-badge");
 
                 let ws;
                 function connectWs() {
@@ -682,6 +824,15 @@ async def get():
                 configsDropdown.onchange = activateConfig;
                 toggleButtonSelect.onchange = changeToggleButton;
 
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.onclick = () => {
+                        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                        tab.classList.add('active');
+                        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+                    };
+                });
+
                 function updateToggleButton(isEnabled) {
                     toggleBtn.textContent = isEnabled ? 'ON' : 'OFF';
                     toggleBtn.className = isEnabled ? 'enabled' : 'disabled';
@@ -691,6 +842,7 @@ async def get():
                     fetch('/status').then(r => r.json()).then(data => {
                         updateToggleButton(data.is_enabled);
                         if (data.toggle_button) toggleButtonSelect.value = data.toggle_button;
+                        if (data.current_config_file) currentConfigBadge.textContent = data.current_config_file.replace('.json', '');
                     }).catch(() => {});
                 }
 
@@ -729,6 +881,66 @@ async def get():
                     }
                     configsDropdown.value = prev;
                 }
+
+                function fetchConfigFiles() {
+                    fetch('/config-files').then(r => r.json()).then(data => {
+                        const prev = configFilesDropdown.value;
+                        configFilesDropdown.innerHTML = '';
+                        for (const file of data.files) {
+                            const option = document.createElement('option');
+                            option.value = file;
+                            option.textContent = file.replace('.json', '');
+                            configFilesDropdown.appendChild(option);
+                        }
+                        configFilesDropdown.value = data.current;
+                        currentConfigBadge.textContent = data.current.replace('.json', '');
+                    }).catch(() => {});
+                }
+
+                function createConfigFile() {
+                    const name = newConfigNameInput.value.trim();
+                    if (!name) return alert('Please enter a config name.');
+                    fetch('/config-files', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ filename: name })
+                    }).then(r => r.json()).then(data => {
+                        alert(data.message || data.detail);
+                        fetchConfigFiles();
+                        newConfigNameInput.value = '';
+                    }).catch(() => alert('Failed to create config.'));
+                }
+
+                function deleteConfigFile() {
+                    const selectedFile = configFilesDropdown.value;
+                    if (!selectedFile) return alert('Please select a config file to delete.');
+                    if (selectedFile === 'r6.json') return alert('Cannot delete default config.');
+                    if (confirm('Delete config file "' + selectedFile + '" and all its guns?')) {
+                        fetch('/config-files/' + encodeURIComponent(selectedFile), { method: 'DELETE' }).then(r => r.json()).then(data => {
+                            alert(data.message || data.detail);
+                            fetchConfigFiles();
+                        }).catch(() => alert('Failed to delete config.'));
+                    }
+                }
+
+                function switchConfigFile() {
+                    const selectedFile = configFilesDropdown.value;
+                    if (!selectedFile) return alert('Please select a config file to load.');
+                    fetch('/config-files/switch', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ filename: selectedFile })
+                    }).then(r => r.json()).then(data => {
+                        currentConfigBadge.textContent = data.current_config_file.replace('.json', '');
+                        allGuns = Object.keys(data.guns);
+                        filterConfigs();
+                        configsDropdown.value = '';
+                    }).catch(() => alert('Failed to switch config.'));
+                }
+
+                configFilesDropdown.onchange = switchConfigFile;
+                createConfigBtn.onclick = createConfigFile;
+                deleteConfigBtn.onclick = deleteConfigFile;
 
                 configSearch.oninput = filterConfigs;
 
@@ -814,6 +1026,7 @@ async def get():
 
                 getStatus();
                 fetchConfigs();
+                fetchConfigFiles();
                 setInterval(getStatus, 500);
             });
         </script>
