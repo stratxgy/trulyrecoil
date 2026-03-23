@@ -2,6 +2,9 @@
 > [!CAUTION]
 > I forgot to account for different DPI's and sensitivities (😭) I'll fix it in the next update but right now its 4-4 800 dpi 60 holo 67 acog advanced zoom settings for r6
 
+> [!IMPORTANT]
+> The MAKXD (the new makcu) will have built-in advanced RCS, effectively making this tool obsolete. It is not clear whether it will work on the old Makcu, but either way this will stop being maintained eventually due to that issue. Also, if the recoil is slightly off make sure your windows mouse sensitivity is set to the default.
+
 A recoil control script with a web UI, powered by a makcu.
 
 I've not tried it, but people say it works on 1pc.
