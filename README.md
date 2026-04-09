@@ -7,6 +7,7 @@
 
 > [!NOTE]  
 > To do: add option to only pull when LMB and RMB are held.
+> Add the option for no toggle button
 
 A recoil control script with a web UI, powered by a makcu.
 
