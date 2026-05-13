@@ -2,11 +2,6 @@
 > [!CAUTION]
 > This program does not automatically account for your dpi, sens, windows sens or any other sensitivities. If you do not want to match my settings, then you will have to manually tweak the values. The current sens for r6 is 4-4 800 dpi 60 holo 67 acog advanced zoom
 
-> [!IMPORTANT]
-> The MAKXD (the new makcu) will have built-in advanced RCS, effectively making this tool obsolete. It is not clear whether it will work on the old Makcu, but either way this will stop being maintained eventually due to that issue. Also, if the recoil is slightly off make sure your windows mouse sensitivity is set to the default.
-
-> [!NOTE]  
-> To do: nothing!
 
 A recoil control script with a web UI, powered by a makcu.
 
@@ -27,6 +22,9 @@ The default config has R6 and Rust guns but you can use it for any game.
 ### Demo
 [![Truly Demo](https://img.youtube.com/vi/ysIKCjLv5eo/maxresdefault.jpg)](https://www.youtube.com/watch?v=ysIKCjLv5eo)
 
+> [!IMPORTANT]
+> The MAKXD (the new makcu) will have built-in advanced RCS, effectively making this tool obsolete. It is not clear whether it will work on the old Makcu, but either way this will stop being maintained eventually due to that issue. Also, if the recoil is slightly off make sure your windows mouse sensitivity is set to the default.
+> 
 ## Requirements
 - Python 3.10+
 - A makcu
