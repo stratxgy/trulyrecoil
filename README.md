@@ -6,8 +6,7 @@
 > The MAKXD (the new makcu) will have built-in advanced RCS, effectively making this tool obsolete. It is not clear whether it will work on the old Makcu, but either way this will stop being maintained eventually due to that issue. Also, if the recoil is slightly off make sure your windows mouse sensitivity is set to the default.
 
 > [!NOTE]  
-> To do: add option to only pull when LMB and RMB are held.
-> Add the option for no toggle button
+> To do: nothing!
 
 A recoil control script with a web UI, powered by a makcu.
 
